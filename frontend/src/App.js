@@ -1,14 +1,23 @@
-import logo from './logo.svg';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import LogIn from './LogIn';
+import ActionSelection from './ActionSelection'; 
+import MediaPage from './MediaPage'; 
+import ManageUsers from './ManageUsers'; 
 
 function App() {
   return (
-    <div className="App">
-      <body>
-        <LogIn />
-      </body>
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<LogIn />} />
+          <Route path="/actionSelect" element={<ActionSelection />} />
+          <Route path="/mediaPage" element={<MediaPage />} />
+          <Route path="/manageUsers" element={<ManageUsers />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

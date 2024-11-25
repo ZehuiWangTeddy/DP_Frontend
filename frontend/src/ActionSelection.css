@@ -1,0 +1,29 @@
+.manageBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 70%;
+}
+
+.selectBox {
+    background-color: #870D0D;
+    width: 300px;
+    aspect-ratio: 1 / 1;
+    padding: 20px; 
+    color: #D9D9D9;
+    text-align: center;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+.selectBox h1 {
+    margin-block: 0px;
+    font-size: 3em;
+}
+
+.selectBox img {
+    width: 100px;
+    margin-top: 15px;
+}

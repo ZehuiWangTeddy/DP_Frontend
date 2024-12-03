@@ -4,6 +4,7 @@ import './App.css';
 import LogIn from './LogIn';
 import ActionSelection from './ActionSelection'; 
 import MediaPage from './MediaPage'; 
+import MediaDetailsPage from './MediaDetailsPage';
 import ManageUsers from './ManageUsers'; 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<LogIn />} />
           <Route path="/actionSelect" element={<ActionSelection />} />
           <Route path="/mediaPage" element={<MediaPage />} />
+          <Route path="/media/:type/:id" element={<MediaDetailsPage />} />
           <Route path="/manageUsers" element={<ManageUsers />} />
         </Routes>
       </div>

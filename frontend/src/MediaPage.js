@@ -59,6 +59,10 @@ function MediaPage() {
                 &lt; Go to Management Page
             </div>
             
+            <div className="addMediaButton">
+                <button onClick={() => navigate('/addMedia')}>Add New Media</button>
+            </div>
+
             <input
                 type="text"
                 placeholder="Search..."

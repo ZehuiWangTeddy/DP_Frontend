@@ -6,13 +6,19 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
-    overflow-y: auto; /* Allow vertical scrolling if content overflows */
-    box-sizing: border-box; /* Include padding in width and height calculations */
+    overflow-y: auto; 
+    box-sizing: border-box; 
+}
+
+.navMediaButton {
+    color: black;
+    font-weight: bold;
+    align-self: flex-start;
 }
 
 .mediaBody h1 {
     align-self: center;
-    margin-bottom: 20px; /* Add space below the header */
+    margin-bottom: 20px; 
 }
 
 button {
@@ -22,7 +28,7 @@ button {
     background-color: #D9D9D9;
     font-size: 1em;
     width: fit-content;
-    margin-top: 10px; /* Add margin top to buttons for spacing */
+    margin-top: 10px;
 }
 
 button:hover {
@@ -31,22 +37,22 @@ button:hover {
 }
 
 .mediaBody form label {
-    display: block; /* Ensures the labels and inputs appear on separate lines */
-    margin-bottom: 10px; /* Adds space below each label */
+    display: block; 
+    margin-bottom: 10px; 
 }
 
 .mediaBody form input,
 .mediaBody form select,
 .mediaBody form textarea {
     padding: 8px;
-    width: 100%; /* Ensure input fields span the full width of the form */
-    margin-top: 5px; /* Adds spacing between label and input */
-    margin-bottom: 15px; /* Adds spacing between fields */
-    box-sizing: border-box; /* Prevent input from overflowing */
+    width: 100%; 
+    margin-top: 5px; 
+    margin-bottom: 15px; 
+    box-sizing: border-box; 
 }
 
 .mediaBody form button {
-    margin-top: 20px; /* Adds extra space between form elements and buttons */
+    margin-top: 20px; 
 }
 
 .editSection {
@@ -55,7 +61,7 @@ button:hover {
 
 .editSection input,
 .editSection select {
-    width: 100%; /* Ensures the input fields are wide enough */
+    width: 100%; 
     margin-top: 5px;
 }
 
@@ -65,11 +71,10 @@ button:hover {
 }
 
 .mediaBody form > div {
-    margin-bottom: 20px; /* Adds more space between blocks of form fields */
+    margin-bottom: 20px; 
 }
 
-/* Prevent overflowing input/textarea fields */
 textarea {
-    resize: vertical; /* Allows resizing vertically but prevents horizontal resizing */
-    min-height: 100px; /* Minimum height for textarea */
+    resize: vertical; 
+    min-height: 100px;
 }

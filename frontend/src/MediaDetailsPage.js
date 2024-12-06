@@ -145,6 +145,9 @@ function MediaDetailsPage() {
 
     return (
         <div className='mediaBody'>
+            <div className="navMediaButton" onClick={() => navigate("/mediaPage")}>
+                &lt; Go to Media Page
+            </div>
             <h1>{type === 'movie' ? 'Edit Movie' : 'Edit Show'}</h1>
             <form>
                 <label>

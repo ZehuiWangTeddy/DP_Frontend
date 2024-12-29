@@ -1,50 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ManageUsers.css';
 import { useNavigate } from 'react-router-dom';
+import { getUsers, deleteUser } from './api/users';
 
-const users = [
-    { id: 1, username: 'xXIncepti-coreXx', subscriptionType: 'SD', discount: 'applied', active: 'yes' },
-    { id: 2, username: 'Jonnah1948', subscriptionType: 'HD', discount: 'not applied', active: 'suspended' },
-    { id: 3, username: 'lordMarcel', subscriptionType: 'SD', discount: 'not applied', active: 'yes' },
-    { id: 4, username: 'KarnivorousKlown', subscriptionType: 'UHD', discount: 'applied', active: 'yes' },
-    { id: 5, username: 'joe', subscriptionType: 'SD', discount: 'not applied', active: 'suspended' },
-    { id: 6, username: 'KimballCho', subscriptionType: 'SD', discount: 'not applied', active: 'yes' },
-    { id: 7, username: 'GojoXOXO', subscriptionType: 'UHD', discount: 'not applied', active: 'yes' },
-    { id: 8, username: 'Ashleigh<3', subscriptionType: 'SD', discount: 'applied', active: 'yes' },
-    { id: 9, username: 'Connor&You', subscriptionType: 'HD', discount: 'not applied', active: 'yes' },
-    { id: 10, username: 'YoMama', subscriptionType: 'UHD', discount: 'applied', active: 'suspended' },
-    { id: 11, username: 'me', subscriptionType: 'HD', discount: 'applied', active: 'yes' },
-];
-
-const itemsPerPage = 5;
+const itemsPerPage = 15;
 
 function ManageUsers() {
     const [currentPage, setCurrentPage] = useState(1);
     const [filterText, setFilterText] = useState('');
-    const [filteredUsers, setFilteredUsers] = useState(users);
-    const navigate = useNavigate(); 
+    const [users, setUsers] = useState([]);
+    const [totalPages, setTotalPages] = useState(1);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchUsers = async (page = 1) => {
+            const token = localStorage.getItem('accessToken');
+            if (token) {
+                const data = await getUsers(token, filterText, page, itemsPerPage);
+                if (data.success && Array.isArray(data.users)) {
+                    setUsers(data.users);
+                    setTotalPages(Math.ceil(data.meta.pagination.total / itemsPerPage));
+                } else {
+                    console.error('Error fetching users:', data.message);
+                }
+            } else {
+                console.error('No access token found');
+            }
+        };
+
+        fetchUsers(currentPage);
+    }, [currentPage, filterText]);
 
     const handleSearch = (event) => {
-        const query = event.target.value.toLowerCase();
+        const query = event.target.value;
         setFilterText(query);
-        const updatedUsers = users.filter(
-        (user) =>
-                user.username.toLowerCase().includes(query) || user.active.toLowerCase().includes(query)
-        );
-        setFilteredUsers(updatedUsers);
-        setCurrentPage(1); 
+        setCurrentPage(1);
     };
 
-    const handleDeleteUser = (userToDelete) => {
-        const updatedUsers = filteredUsers.filter(user => user.id !== userToDelete.id);
-        setFilteredUsers(updatedUsers);
+    const handleDeleteUser = async (userToDelete) => {
+        const confirmDelete = window.confirm(`Are you sure you want to delete user ${userToDelete.name}?`);
+        if (confirmDelete) {
+            const token = localStorage.getItem('accessToken');
+            if (token) {
+                const result = await deleteUser(token, userToDelete.user_id);
+                if (result.success) {
+                    const updatedUsers = users.filter(user => user.user_id !== userToDelete.user_id);
+                    setUsers(updatedUsers);
+                } else {
+                    console.error('Error deleting user:', result.message);
+                }
+            } else {
+                console.error('No access token found');
+            }
+        }
     };
-
-    const indexOfLastUser = currentPage * itemsPerPage;
-    const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-
-    const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -59,28 +68,39 @@ function ManageUsers() {
             <div className="manageUsersContainer">
                 <input
                     type="text"
-                    placeholder="Search by username or status"
+                    placeholder="Search by username"
                     value={filterText}
                     onChange={handleSearch}
                     className="search-input"
                 />
                 <ul className="userList">
-                    {currentUsers.map((user) => (
-                        <li key={user.id} className="userItem">
-                            <strong>Username:</strong> {user.username} <br />
-                            <strong>Subscription:</strong> {user.subscriptionType} <br />
-                            <strong>Discount:</strong> {user.discount} <br />
-                            <strong>Status:</strong> {user.active}
-                            <button
-                                type="button"
-                                onClick={() => handleDeleteUser(user)}
-                                style={{ marginLeft: '10px', color: 'red' }}
-                            >
-                                Delete User
-                            </button>
+                    {users.map((user) => (
+                        <li key={user.user_id} className="userItem">
+                            <div className="userInfo">
+                                <strong>Username:</strong> {user.name} <br />
+                                <strong>Email:</strong> {user.email} <br />
+                                <strong>Discount:</strong> {user.has_discount ? 'applied' : 'not applied'} <br />
+                                <strong>Status:</strong> {user.active ? 'active' : 'inactive'}
+                            </div>
+                            <div className="action">
+                                <button
+                                    type="button"
+                                    style={{ marginLeft: '10px', color: 'red' }}
+                                >
+                                    Edit User
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => handleDeleteUser(user)}
+                                    style={{ marginLeft: '10px', color: 'red' }}
+                                >
+                                    Delete User
+                                </button>
+                            </div>
                         </li>
                     ))}
-                    {currentUsers.length === 0 && <p>No users found</p>}
+                    {users.length === 0 && <p>No users found</p>}
                 </ul>
                 <div className="pagination">
                     {Array.from({ length: totalPages }).map((_, index) => (

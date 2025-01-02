@@ -1,56 +1,106 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import "./MediaPage.css";
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const movies = [
-  { id: 1, title: 'Inception' },
-  { id: 2, title: 'The Matrix' },
-  { id: 3, title: 'Interstellar' },
-  { id: 4, title: 'The Barbie Movie' },
-  { id: 5, title: 'The Sixth Sense' },
-  { id: 6, title: 'Knives Out' },
-  { id: 7, title: "Emperor's New Groove" },
-];
-
-const series = [
-  { id: 1, title: 'The Office' },
-  { id: 2, title: 'House MD' },
-  { id: 3, title: 'Gravity Falls' },
-];
+import { API_HOST } from './config';
 
 const itemsPerPage = 5;
 
 function MediaPage() {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     const [activeTab, setActiveTab] = useState('movies');
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
+    const [media, setMedia] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const filteredMovies = movies.filter((movie) =>
-        movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-     );
-    const filteredSeries = series.filter((show) =>
-        show.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const fetchMedia = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            const endpoint = activeTab === 'movies' ? '/movies' : '/series';
+            const response = await fetch(`${API_HOST}${endpoint}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setMedia(data.data);
+            } else {
+                setError(`Failed to fetch ${activeTab}`);
+            }
+        } catch (error) {
+            setError(`Error fetching ${activeTab}: ${error.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchMedia();
+    }, [activeTab]);
+
+    const filteredMedia = media.filter((item) =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const currentMovies = filteredMovies.slice(
+    const currentMedia = filteredMedia.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
 
-    const currentSeries = filteredSeries.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-
-    const totalPagesMovies = Math.ceil(filteredMovies.length / itemsPerPage);
-    const totalPagesSeries = Math.ceil(filteredSeries.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredMedia.length / itemsPerPage);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
+    };
+
+    const renderPagination = () => {
+        const maxVisibleButtons = 5; // Limit visible buttons
+        const half = Math.floor(maxVisibleButtons / 2);
+        let start = Math.max(1, currentPage - half);
+        let end = Math.min(totalPages, currentPage + half);
+
+        if (currentPage <= half) {
+            end = Math.min(totalPages, maxVisibleButtons);
+        } else if (currentPage + half >= totalPages) {
+            start = Math.max(1, totalPages - maxVisibleButtons + 1);
+        }
+
+        const buttons = [];
+        for (let i = start; i <= end; i++) {
+            buttons.push(
+                <button
+                    key={i}
+                    className={currentPage === i ? 'active' : ''}
+                    onClick={() => handlePageChange(i)}
+                >
+                    {i}
+                </button>
+            );
+        }
+
+        return (
+            <>
+                {currentPage > 1 && (
+                    <button onClick={() => handlePageChange(currentPage - 1)}>
+                        Previous
+                    </button>
+                )}
+                {start > 1 && <span>...</span>}
+                {buttons}
+                {end < totalPages && <span>...</span>}
+                {currentPage < totalPages && (
+                    <button onClick={() => handlePageChange(currentPage + 1)}>
+                        Next
+                    </button>
+                )}
+            </>
+        );
     };
 
     return (
@@ -58,7 +108,7 @@ function MediaPage() {
             <div className="navButton" onClick={() => navigate("/actionSelect")}>
                 &lt; Go to Management Page
             </div>
-            
+
             <div className="addMediaButton">
                 <button onClick={() => navigate('/addMedia')}>Add New Media</button>
             </div>
@@ -73,66 +123,43 @@ function MediaPage() {
 
             <div className="tabs">
                 <button
-                className={activeTab === 'movies' ? 'active' : ''}
-                onClick={() => setActiveTab('movies')}
+                    className={activeTab === 'movies' ? 'active' : ''}
+                    onClick={() => {
+                        setActiveTab('movies');
+                        setCurrentPage(1);
+                    }}
                 >
                     Movies
                 </button>
                 <button
-                className={activeTab === 'series' ? 'active' : ''}
-                onClick={() => setActiveTab('series')}
+                    className={activeTab === 'series' ? 'active' : ''}
+                    onClick={() => {
+                        setActiveTab('series');
+                        setCurrentPage(1);
+                    }}
                 >
                     Shows
                 </button>
             </div>
 
-            {activeTab === 'movies' && (
-                <div className="movieList">
-                    <h1>Films</h1>
+            {loading ? (
+                <p>Loading...</p>
+            ) : error ? (
+                <p>Error: {error}</p>
+            ) : (
+                <div className={activeTab === 'movies' ? "movieList" : "seriesList"}>
+                    <h1>{activeTab === 'movies' ? 'Films' : 'Shows'}</h1>
                     <ul>
-                        {currentMovies.map((movie) => (
-                            <li key={movie.id}>
-                                <Link className='linkStyle' to={`/media/movie/${movie.id}`}>{movie.title}</Link>
+                        {currentMedia.map((item) => (
+                            <li key={item.id}>
+                                <Link className='linkStyle' to={`/media/${activeTab === 'movies' ? 'movie' : 'show'}/${item.id}`}>
+                                    {item.title}
+                                </Link>
                             </li>
                         ))}
-                        {currentMovies.length === 0 && <p>No movies found</p>}
+                        {currentMedia.length === 0 && <p>No {activeTab === 'movies' ? 'movies' : 'shows'} found</p>}
                     </ul>
-                    <div className="pagination">
-                        {Array.from({ length: totalPagesMovies }).map((_, index) => (
-                            <button
-                            key={index}
-                            className={currentPage === index + 1 ? 'active' : ''}
-                            onClick={() => handlePageChange(index + 1)}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {activeTab === 'series' && (
-                <div className="seriesList">
-                    <h1>Shows</h1>
-                    <ul>
-                        {currentSeries.map((show) => (
-                            <li key={show.id}>
-                                <Link className='linkStyle' to={`/media/show/${show.id}`}>{show.title}</Link>
-                            </li>
-                        ))}
-                        {currentSeries.length === 0 && <p>No shows found</p>}
-                    </ul>
-                    <div className="pagination">
-                        {Array.from({ length: totalPagesSeries }).map((_, index) => (
-                            <button
-                            key={index}
-                            className={currentPage === index + 1 ? 'active' : ''}
-                            onClick={() => handlePageChange(index + 1)}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-                    </div>
+                    <div className="pagination">{renderPagination()}</div>
                 </div>
             )}
         </div>

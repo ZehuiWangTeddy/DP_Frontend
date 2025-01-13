@@ -24,7 +24,7 @@ export const getUsers = async (token, search = "", page = 1, perPage = 15) => {
 
 export const deleteUser = async (token, userId) => {
     try {
-        const response = await fetch(`${API_HOST}/api/v1/users/${userId}`, {
+        const response = await fetch(`${API_HOST}/users/${userId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -45,7 +45,7 @@ export const deleteUser = async (token, userId) => {
 
 export const editUser = async (token, userId, newName, newAddress) => {
     try {
-        const response = await fetch(`${API_HOST}/api/v1/users/${userId}`, {
+        const response = await fetch(`${API_HOST}/users/${userId}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,

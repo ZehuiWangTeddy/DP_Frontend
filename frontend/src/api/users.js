@@ -2,7 +2,7 @@ import { API_HOST } from '../config'; // 引入配置文件
 
 export const getUsers = async (token, search = "", page = 1, perPage = 15) => {
     try {
-        const response = await fetch(`${API_HOST}/api/v1/users?search=${search}&page=${page}&per_page=${perPage}`, {
+        const response = await fetch(`${API_HOST}/users?search=${search}&page=${page}&per_page=${perPage}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,

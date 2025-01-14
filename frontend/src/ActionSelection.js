@@ -29,13 +29,17 @@ function ActionSelection() {
             <div className="selectBox" onClick={() => navigate("/mediaPage")}>
                 <h1>Manage</h1>
                 <h1>Media</h1>
-                <img src={Film} />
+                <img src={Film}/>
             </div>
 
             <div className="selectBox" onClick={() => navigate("/manageUsers")}>
                 <h1>Manage</h1>
                 <h1>Users</h1>
-                <img src={User} />
+                <img src={User}/>
+            </div>
+
+            <div className="selectBox logoutBtn" onClick={() => navigate("/checkExchanges")}>
+                <h1>Currency Exchange Rates</h1>
             </div>
 
             <div className="selectBox logoutBtn">

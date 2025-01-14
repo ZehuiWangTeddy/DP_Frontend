@@ -127,3 +127,18 @@ p {
     font-weight: bold;
     cursor: default;
 }
+
+.manageUsersContainer {
+    background-color: #870D0D;
+    width: 80%;
+    align-self: center;
+    margin-bottom: 20px;
+}
+
+.navButtonUsers {
+    color: #870D0D;
+    font-weight: bold;
+    align-self: flex-start;
+    margin-left: 20px;
+    margin-top: 50px;
+}

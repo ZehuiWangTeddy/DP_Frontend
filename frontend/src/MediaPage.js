@@ -105,7 +105,7 @@ function MediaPage() {
 
     return (
         <div className="body">
-            <div className="navButton" onClick={() => navigate("/actionSelect")}>
+            <div className="navButtonUsers" onClick={() => navigate("/actionSelect")}>
                 &lt; Go to Management Page
             </div>
 
@@ -152,7 +152,8 @@ function MediaPage() {
                     <ul>
                         {currentMedia.map((item) => (
                             <li key={item.id}>
-                                <Link className='linkStyle' to={`/media/${activeTab === 'movies' ? 'movie' : 'show'}/${item.id}`}>
+                                <Link className='linkStyle'
+                                      to={`/media/${activeTab === 'movies' ? 'movie' : 'show'}/${item.id}`}>
                                     {item.title}
                                 </Link>
                             </li>

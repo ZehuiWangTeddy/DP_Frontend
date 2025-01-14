@@ -6,7 +6,8 @@ import ActionSelection from './ActionSelection';
 import MediaPage from './MediaPage'; 
 import AddMedia from './AddMedia'; 
 import MediaDetailsPage from './MediaDetailsPage';
-import ManageUsers from './ManageUsers'; 
+import ManageUsers from './ManageUsers';
+import CheckExchangeRates from "./CheckExchangeRates";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/addMedia" element={<AddMedia />} />
           <Route path="/media/:type/:id" element={<MediaDetailsPage />} />
           <Route path="/manageUsers" element={<ManageUsers />} />
+          <Route path="/checkExchanges" element={<CheckExchangeRates />} />
         </Routes>
       </div>
     </Router>
